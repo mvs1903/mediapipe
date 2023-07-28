@@ -72,32 +72,34 @@ import mediapipe as mp
 
 from aws_lambda_typing import context as context_, events
 
-mp_pose = mp.solutions.mediapipe.python.solutions.holistic
+mp_pose = mp.solutions.holistic
 
-def handler(event: events.APIGatewayProxyEventV2, context: context_.Context):
+def handler(event, context):
     pose = mp_pose.Holistic(
         static_image_mode=True,
         model_complexity=2,
         enable_segmentation=True,
         min_detection_confidence=0.5)
+    print("Initialization finished")
+    # bucket = event.get('bucket') or os.environ.get('S3_BUCKET_NAME')
+    # key = event.get('key')
 
-    bucket = event.get('bucket') or os.environ.get('S3_BUCKET_NAME')
-    key = event.get('key')
+    # if bucket is None or key is None:
+    #     return {
+    #         "statusCode": 409,
+    #         "body": json.dumps({"message": "Bad request"})
+    #     }
 
-    if bucket is None or key is None:
-        return {
-            "statusCode": 409,
-            "body": json.dumps({"message": "Bad request"})
-        }
+    # local_file_path = f'/tmp/{key}'
 
-    local_file_path = f'/tmp/{key}'
+    # boto3.client('s3').download_file(bucket, key, local_file_path)
 
-    boto3.client('s3').download_file(bucket, key, local_file_path)
-
-    image = cv2.imread(local_file_path)
-
+    # image = cv2.imread(local_file_path)
+    file = 'MicrosoftTeams-image.png'
+    image = cv2.imread(file)
     # Convert the BGR image to RGB before processing.
     results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    # return "Hello"
 
     if not results.pose_landmarks:
         return {
@@ -114,8 +116,6 @@ def handler(event: events.APIGatewayProxyEventV2, context: context_.Context):
         })
     }
 
-if __name__ == "__main__":
-    print(handler(None, None))
 
 
 

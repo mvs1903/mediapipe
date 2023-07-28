@@ -2,23 +2,25 @@ FROM amazon/aws-lambda-python:3.8
 
 # Install required system dependencies
 RUN yum install -y mesa-libGLw
+RUN export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 
 # Create a virtual environment and set it as the working directory
-WORKDIR /app
-RUN python3 -m venv venv
-ENV PATH="/app/venv/bin:$PATH"
+
+# RUN python3 -m venv venv
+# ENV PATH="/app/venv/bin:$PATH"
 
 # Copy the requirements file and install dependencies
-COPY requirements.txt ./
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
 
-RUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
 
 # Copy the Python script files
-COPY application.py ./
-COPY init_models.py ./
+COPY application.py ${LAMBDA_TASK_ROOT}
+COPY init_models.py ${LAMBDA_TASK_ROOT}
+COPY MicrosoftTeams-image.png ${LAMBDA_TASK_ROOT}
 
 # Comment out the model download step
-# RUN python3 init_models.py
+RUN python3 init_models.py
 
 # Manually copy the model file to the expected location
 # COPY pose_landmark_heavy.tflite /app/venv/lib/python3.8/site-packages/mediapipe/modules/pose_landmark/

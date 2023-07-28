@@ -1,7 +1,7 @@
-import cv2 
+import cv2
 import mediapipe as mp
 
-mp_pose = mp.solutions.mediapipe.python.solutions.holistic
+mp_pose = mp.solutions.holistic
 
 pose = mp_pose.Holistic(
     static_image_mode=True,
