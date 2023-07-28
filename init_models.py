@@ -1,4 +1,4 @@
-import cv2
+import cv2 
 import mediapipe as mp
 
 mp_pose = mp.solutions.mediapipe.python.solutions.holistic
@@ -10,7 +10,7 @@ pose = mp_pose.Holistic(
     min_detection_confidence=0.5)
 
 
-file = './example-pose.png'
+file = 'MicrosoftTeams-image.png'
 image = cv2.imread(file)
 # Convert the BGR image to RGB before processing.
 results = pose.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
